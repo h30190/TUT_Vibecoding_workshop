@@ -1,0 +1,306 @@
+/* 8-Bit Cyber-Arcade styling */
+:root {
+  --neon-green: #39ff14;
+  --neon-red: #ff3131;
+  --neon-blue: #00f0ff;
+  --neon-yellow: #fff01f;
+  --dark-bg: #09090b;
+  --cabinet-color: #18181b;
+  --bezel-color: #27272a;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--dark-bg);
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  image-rendering: pixelated;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+#app {
+  width: 100%;
+  max-width: 840px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Arcade Cabinet Shell */
+.arcade-cabinet {
+  background-color: var(--cabinet-color);
+  border: 8px solid #2e2e33;
+  border-radius: 20px;
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(0, 240, 255, 0.2);
+  padding: 16px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cabinet-header {
+  text-align: center;
+  border-bottom: 4px dashed #3f3f46;
+  padding-bottom: 8px;
+}
+
+.cabinet-header h1 {
+  font-size: 16px;
+  color: var(--neon-blue);
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+  margin: 8px 0;
+}
+
+/* Game Screen Container */
+.screen-container {
+  position: relative;
+  width: 768px;
+  height: 480px;
+  background-color: #000;
+  border: 12px solid var(--bezel-color);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 1);
+  margin: 0 auto;
+}
+
+/* Responsive aspect ratio preservation */
+@media (max-width: 820px) {
+  .screen-container {
+    width: 100%;
+    height: 0;
+    padding-bottom: 62.5%; /* 320/512 = 0.625 */
+  }
+  
+  #game-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+#game-canvas {
+  display: block;
+  image-rendering: pixelated;
+  width: 100%;
+  height: 100%;
+}
+
+/* CRT Effects */
+.crt-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.06),
+    rgba(0, 255, 0, 0.02),
+    rgba(0, 0, 255, 0.06)
+  );
+  background-size: 100% 4px, 6px 100%;
+  z-index: 10;
+  pointer-events: none;
+  animation: flicker 0.15s infinite;
+}
+
+.crt-vignette {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle, 
+    transparent 60%, 
+    rgba(0, 0, 0, 0.75) 100%
+  );
+  z-index: 11;
+  pointer-events: none;
+}
+
+/* Overlays (Start Menu, Game Over, Victory) */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+  text-align: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.overlay.hidden {
+  display: none !important;
+}
+
+.game-title {
+  font-size: 28px;
+  color: var(--neon-yellow);
+  text-shadow: 4px 4px 0px #d97706;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #fff;
+  margin-top: 10px;
+  letter-spacing: 2px;
+}
+
+.menu-options {
+  margin-top: 24px;
+}
+
+.controls-guide {
+  margin-top: 28px;
+  font-size: 8px;
+  color: #a1a1aa;
+  line-height: 1.8;
+  border-top: 2px dashed #3f3f46;
+  padding-top: 12px;
+  width: 80%;
+}
+
+.btn-retro {
+  font-family: 'Press Start 2P', monospace;
+  background-color: #27272a;
+  border: 4px solid #fff;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 10px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px #52525b;
+  transition: all 0.1s ease;
+}
+
+.btn-retro:hover {
+  background-color: #3f3f46;
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #52525b;
+}
+
+.btn-retro:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px #52525b;
+}
+
+/* Danger & Success Texts */
+.danger-text {
+  font-size: 24px;
+  color: var(--neon-red);
+  text-shadow: 0 0 10px rgba(255, 49, 49, 0.6);
+  margin: 0 0 12px 0;
+}
+
+.success-text {
+  font-size: 24px;
+  color: var(--neon-green);
+  text-shadow: 0 0 10px rgba(57, 255, 20, 0.6);
+  margin: 0 0 12px 0;
+}
+
+.score-result {
+  font-size: 10px;
+  color: #fff;
+  margin-bottom: 24px;
+}
+
+/* HUD System */
+.hud-overlay {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 15;
+  pointer-events: none;
+  display: flex;
+  justify-content: space-between;
+  font-size: 8px;
+  color: #fff;
+  text-shadow: 2px 2px 0px #000;
+}
+
+.hud-left, .hud-right {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hud-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Food/Energy Bar */
+.bar-container {
+  width: 60px;
+  height: 8px;
+  border: 2px solid #fff;
+  background-color: #000;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+#hud-food-bar {
+  width: 100%;
+  height: 100%;
+  background-color: var(--neon-green);
+  box-shadow: inset 0 0 4px rgba(0, 255, 0, 0.5);
+  transition: width 0.1s linear;
+}
+
+/* Footer & Instructions */
+.cabinet-footer {
+  border-top: 4px dashed #3f3f46;
+  padding-top: 10px;
+  text-align: center;
+}
+
+.d-pad-instructions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  font-size: 8px;
+  color: #71717a;
+}
+
+/* Animations */
+@keyframes flicker {
+  0% { opacity: 0.98; }
+  50% { opacity: 1; }
+  100% { opacity: 0.99; }
+}
+
+.blink {
+  animation: blink-anim 1s step-end infinite;
+}
+
+.blink-slow {
+  animation: blink-anim 1.5s step-end infinite;
+}
+
+@keyframes blink-anim {
+  50% { opacity: 0; }
+}

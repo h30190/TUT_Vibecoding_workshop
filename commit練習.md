@@ -1,3 +1,0 @@
-hfwadqw;dhsadhiyrpqyrqpd
-
-我要讓AI採棉花

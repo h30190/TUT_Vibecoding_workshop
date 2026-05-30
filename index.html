@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>8-Bit Retro Island Adventure</title>
+    <!-- Google Fonts for 8-bit text style -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div id="app">
+      <div class="arcade-cabinet">
+        <div class="cabinet-header">
+          <h1>8-BIT RETRO RUNNER</h1>
+        </div>
+        
+        <div class="screen-container">
+          <!-- CRT Scanline & Curved effects -->
+          <div class="crt-overlay"></div>
+          <div class="crt-vignette"></div>
+          
+          <!-- Game Canvas -->
+          <canvas id="game-canvas" width="512" height="320"></canvas>
+          
+          <!-- UI Overlays -->
+          <!-- 1. Start Menu -->
+          <div id="start-menu" class="overlay active">
+            <h2 class="game-title blink-slow">RETRO ISLAND</h2>
+            <p class="subtitle">ADVENTURE</p>
+            <div class="menu-options">
+              <button id="start-button" class="btn-retro">START GAME</button>
+            </div>
+            <div class="controls-guide">
+              <p>CONTROLS:</p>
+              <p>A / D : MOVE LEFT/RIGHT</p>
+              <p>K / SPACE : JUMP (DOUBLE JUMP)</p>
+              <p>J : THROW STONE AXE</p>
+            </div>
+          </div>
+
+          <!-- 2. Game HUD (always present but layered) -->
+          <div id="game-hud" class="hud-overlay">
+            <div class="hud-left">
+              <div class="hud-item">HP: <span id="hud-hp">❤❤❤</span></div>
+              <div class="hud-item">FOOD: <div class="bar-container"><div id="hud-food-bar"></div></div></div>
+            </div>
+            <div class="hud-right">
+              <div class="hud-item">SCORE: <span id="hud-score">000000</span></div>
+              <div class="hud-item">LEVEL: <span id="hud-level">1</span></div>
+            </div>
+          </div>
+
+          <!-- 3. Game Over Screen -->
+          <div id="game-over-screen" class="overlay hidden">
+            <h2 class="danger-text">GAME OVER</h2>
+            <p class="score-result">FINAL SCORE: <span id="final-score">0</span></p>
+            <button id="restart-button" class="btn-retro">PLAY AGAIN</button>
+          </div>
+
+          <!-- 4. Level Clear Screen -->
+          <div id="level-clear-screen" class="overlay hidden">
+            <h2 class="success-text blink">VICTORY</h2>
+            <p class="score-result">STAGE CLEAR!</p>
+            <button id="next-level-button" class="btn-retro">NEXT STAGE</button>
+          </div>
+        </div>
+
+        <div class="cabinet-footer">
+          <div class="d-pad-instructions">
+            <span>[A/D] Move</span>
+            <span>[K/SPACE] Jump</span>
+            <span>[J] Attack</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
