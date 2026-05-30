@@ -169,57 +169,68 @@ export class Sound {
   }
 
   // 6. 8-Bit Loopable Background Music (BGM)
-  // Plays a retro bassline & melody using synthesized oscillators
+  // Plays a rich retro chiptune arpeggio using synchronized oscillators
   public playBgm() {
     if (this.isMuted) return;
     this.stopBgm();
     this.init();
     
-    // Cyber Retro bassline notes (repeating sequence)
-    const baseMelody = [
-      130.81, 130.81, 164.81, 196.00,
-      146.83, 146.83, 174.61, 220.00,
-      164.81, 164.81, 196.00, 246.94,
-      130.81, 130.81, 196.00, 261.63
+    // Upbeat retro C-F-G major chord progression melody
+    const melody = [
+      261.63, 329.63, 392.00, 523.25, // C Major
+      293.66, 349.23, 440.00, 587.33, // D Minor
+      329.63, 392.00, 493.88, 659.25, // E Minor
+      349.23, 440.00, 523.25, 698.46, // F Major
+      392.00, 493.88, 587.33, 783.99, // G Major
+      349.23, 440.00, 523.25, 698.46, // F Major
+      392.00, 493.88, 587.33, 783.99, // G Major
+      523.25, 392.00, 329.63, 261.63  // C Major descent
     ];
     
     let noteIndex = 0;
-    const tempo = 180; // BPM
-    const noteDuration = 60 / tempo; // duration of 1 beat (0.33s)
+    const tempo = 160; // BPM
+    const noteDuration = 60 / tempo; // 0.375s per beat
 
     const playNextNote = () => {
       if (this.isMuted || !this.ctx) return;
       try {
-        const t = this.ctx.currentTime;
-        const freq = baseMelody[noteIndex];
+        // Ensure AudioContext is active
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
         
-        // Play bass note (Triangle wave for soft retro hum)
+        const t = this.ctx.currentTime;
+        const freq = melody[noteIndex];
+        
+        // 1. Lead voice: Retro Square wave (Arpeggio)
+        const leadOsc = this.ctx.createOscillator();
+        const leadGain = this.ctx.createGain();
+        leadOsc.type = 'square';
+        leadOsc.frequency.setValueAtTime(freq, t);
+        
+        leadGain.gain.setValueAtTime(0.035, t); // Audible but not deafening
+        leadGain.gain.exponentialRampToValueAtTime(0.001, t + noteDuration * 0.85);
+        
+        leadOsc.connect(leadGain);
+        leadGain.connect(this.ctx.destination);
+        leadOsc.start(t);
+        leadOsc.stop(t + noteDuration);
+
+        // 2. Bass backing voice: Triangle wave (one octave lower)
         const bassOsc = this.ctx.createOscillator();
         const bassGain = this.ctx.createGain();
         bassOsc.type = 'triangle';
-        bassOsc.frequency.setValueAtTime(freq, t);
-        bassGain.gain.setValueAtTime(0.08, t);
+        bassOsc.frequency.setValueAtTime(freq / 2.0, t);
+        
+        bassGain.gain.setValueAtTime(0.09, t); // Soft retro bass rumble
         bassGain.gain.exponentialRampToValueAtTime(0.001, t + noteDuration * 0.95);
+        
         bassOsc.connect(bassGain);
         bassGain.connect(this.ctx.destination);
         bassOsc.start(t);
         bassOsc.stop(t + noteDuration);
 
-        // Occasional high note (Square wave for melody accents)
-        if (noteIndex % 4 === 0 || noteIndex % 7 === 0) {
-          const melOsc = this.ctx.createOscillator();
-          const melGain = this.ctx.createGain();
-          melOsc.type = 'square';
-          melOsc.frequency.setValueAtTime(freq * 2.0, t); // Octave up
-          melGain.gain.setValueAtTime(0.015, t);
-          melGain.gain.exponentialRampToValueAtTime(0.001, t + noteDuration * 0.5);
-          melOsc.connect(melGain);
-          melGain.connect(this.ctx.destination);
-          melOsc.start(t);
-          melOsc.stop(t + noteDuration * 0.5);
-        }
-
-        noteIndex = (noteIndex + 1) % baseMelody.length;
+        noteIndex = (noteIndex + 1) % melody.length;
       } catch (e) {
         console.warn("BGM playback error", e);
       }
