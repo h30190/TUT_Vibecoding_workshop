@@ -279,7 +279,12 @@ export class Player extends Entity {
     }
   }
 
-  public handleInput(keys: { isLeft: () => boolean; isRight: () => boolean; isJump: () => boolean; isAttack: () => boolean }, map: GameMap, spawnAxe: (x: number, y: number, dir: number) => void) {
+  public handleInput(
+    keys: { isLeft: () => boolean; isRight: () => boolean; isJump: () => boolean; isAttack: () => boolean },
+    map: GameMap,
+    spawnAxe: (x: number, y: number, dir: number) => void,
+    playAudio?: (type: 'jump') => void
+  ) {
     this.hitCeiling = false;
     // Move left/right
     let moveDir = 0;
@@ -318,10 +323,12 @@ export class Player extends Entity {
         if (this.onGround) {
           this.vy = -6.5;
           this.onGround = false;
+          if (playAudio) playAudio('jump');
         } else if (this.airJumpsUsed < this.maxAirJumps) {
           // Double jump
           this.vy = -5.8;
           this.airJumpsUsed++;
+          if (playAudio) playAudio('jump');
         }
       }
     } else {

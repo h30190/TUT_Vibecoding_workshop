@@ -21,6 +21,13 @@ nextLevelBtn.addEventListener('click', () => {
   game.nextLevel();
 });
 
+// Sound Mute Toggle
+const muteBtn = document.getElementById('hud-mute')!;
+muteBtn.addEventListener('click', () => {
+  const isMuted = game.sound.toggleMute();
+  muteBtn.textContent = isMuted ? '🔇 MUTE' : '🔊 SOUND';
+});
+
 // Game loop
 function loop() {
   game.update();

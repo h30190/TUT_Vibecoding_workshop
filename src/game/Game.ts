@@ -3,6 +3,7 @@ import { Camera } from './Camera';
 import { Input } from './Input';
 import { Player, Slime, Bat, Collectible, Axe, Entity } from './Entity';
 import { Physics } from './Physics';
+import { Sound } from './Sound';
 
 interface Particle {
   x: number;
@@ -24,6 +25,7 @@ export class Game {
   
   private map: GameMap;
   private camera: Camera;
+  public sound: Sound = new Sound();
   
   public player!: Player;
   private enemies: Entity[] = [];
@@ -76,6 +78,7 @@ export class Game {
     this.ticks = 0;
     this.initLevel();
     this.showState('PLAYING');
+    this.sound.playBgm();
   }
 
   public restartGame() {
@@ -87,6 +90,7 @@ export class Game {
       this.currentLevel++;
       this.initLevel();
       this.showState('PLAYING');
+      this.sound.playBgm();
     } else {
       // Completed all levels!
       this.showState('START');
@@ -154,6 +158,7 @@ export class Game {
 
     if (state === 'START') {
       this.startMenu.classList.remove('hidden');
+      this.sound.stopBgm();
     } else if (state === 'PLAYING') {
       this.hudOverlay.style.display = 'flex';
       this.updateHud();
@@ -229,12 +234,15 @@ export class Game {
       this.axes.push(new Axe(ax, ay, adir));
       // Spark particle at throw position
       this.spawnParticles(ax, ay, '#00f0ff', 4);
+    }, (type) => {
+      if (type === 'jump') this.sound.playJump();
     });
 
     // Death check
     if (this.player.isDead) {
       this.spawnParticles(this.player.x + 7, this.player.y + 10, '#ff3131', 20);
       this.showState('GAMEOVER');
+      this.sound.playGameOver();
       return;
     }
 
@@ -269,6 +277,7 @@ export class Game {
           axe.isDead = true;
           this.player.addScore(200);
           this.spawnParticles(enemy.x + 8, enemy.y + 6, '#ec4899', 15);
+          this.sound.playHit();
           break;
         }
       }
@@ -283,10 +292,12 @@ export class Game {
           this.player.vy = -4.5; // Bounce player up
           this.player.addScore(100);
           this.spawnParticles(enemy.x + 8, enemy.y + 6, '#10b981', 12);
+          this.sound.playHit();
         } else {
           // Player gets hit
           this.player.takeDamage(1);
           this.spawnParticles(this.player.x + 7, this.player.y + 10, '#ff3131', 8);
+          this.sound.playHit();
         }
       }
     }
@@ -301,7 +312,11 @@ export class Game {
           this.player.collectFood(30); // Replenish energy
           this.player.addScore(50);
           this.spawnParticles(item.x + 6, item.y + 6, '#ef4444', 6);
+        } else if (item.type === 'coin') {
+          this.player.addScore(200);
+          this.spawnParticles(item.x + 6, item.y + 6, '#fbbf24', 6);
         }
+        this.sound.playCoin();
         this.collectibles.splice(i, 1);
       }
     }
@@ -318,10 +333,12 @@ export class Game {
         const tile = this.map.getTile(c, r);
         if (tile === 'X') {
           this.player.takeDamage(1);
+          this.sound.playHit();
         }
         else if (tile === 'G') {
           // Reached Goal flag!
           this.showState('VICTORY');
+          this.sound.playVictory();
           return;
         }
       }
@@ -345,6 +362,7 @@ export class Game {
           const coinX = c * this.map.tileSize + 8;
           const coinY = headY * this.map.tileSize - 8;
           this.spawnParticles(coinX, coinY, '#fbbf24', 12);
+          this.sound.playCoin();
         }
       }
     }
